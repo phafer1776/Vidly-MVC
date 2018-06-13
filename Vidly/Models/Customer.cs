@@ -9,14 +9,21 @@ namespace Vidly.Models
     public class Customer
     {
         public int Id { get; set; }
+        
         // Data Annotations - Name attribute is not nullable
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
+
+        // Have to recompile to change label.
+        [Display(Name = "Date of Birth")]
         public DateTime? Birthdate { get; set; }
+
         public bool IsSubscribedToNewsletter { get; set; }
         // Navigation property
         public MembershipType MembershipType { get; set; }
+
+        [Display(Name = "Membership Type")]
         // Entity treats this as foreign key
         public byte MembershipTypeId { get; set; }
     }
