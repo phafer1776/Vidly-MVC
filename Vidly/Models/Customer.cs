@@ -11,12 +11,13 @@ namespace Vidly.Models
         public int Id { get; set; }
         
         // Data Annotations - Name attribute is not nullable
-        [Required]
+        [Required(ErrorMessage = "Please enter customer's name.")]
         [StringLength(255)]
         public string Name { get; set; }
 
         // Have to recompile to change label.
         [Display(Name = "Date of Birth")]
+        [Min18YearsIfAMember]
         public DateTime? Birthdate { get; set; }
 
         public bool IsSubscribedToNewsletter { get; set; }

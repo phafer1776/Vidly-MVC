@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web;
 using System.Web.Mvc;
 using Vidly.Models;
@@ -29,6 +30,7 @@ namespace Vidly.Controllers
             var membershipTypes = _context.MembershipTypes.ToList();
             var viewModel = new CustomerFormViewModel
             {
+                Customer = new Customer(),
                 MembershipTypes = membershipTypes
             };
             return View("CustomerForm", viewModel);
@@ -36,8 +38,20 @@ namespace Vidly.Controllers
 
         // Post, not Get
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Customer customer) // Model binding
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CustomerFormViewModel
+                {
+                    Customer = customer,
+                    MembershipTypes = _context.MembershipTypes.ToList()
+                };
+
+                return View("CustomerForm", viewModel);
+            }
+
             if (customer.Id == 0)   // New customer
             {
                 _context.Customers.Add(customer);
@@ -58,10 +72,16 @@ namespace Vidly.Controllers
 
         public ViewResult Index()
         {
-            // Deferred execution - not queried until iterating over object.
-            // Can immediately execute query with .ToList() method.
-            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
-            return View(customers);
+            //if (MemoryCache.Default["Genres"] == null)
+            //{
+            //    MemoryCache.Default["Genres"] = _context.Genres.ToList();
+            //}
+
+            // Data caching
+            //var genres = MemoryCache.Default["Genres"] as IEnumerable<Genre>;
+            
+            // Customers are fetched from the API
+            return View();
         }
 
         // GET: Customers
